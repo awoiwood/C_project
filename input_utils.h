@@ -52,25 +52,23 @@ namespace input {
         while (true) {
             std::cout << prompt;
             std::getline(std::cin, input);
-            try{
+            try {
                 if (is_integer(input)) {
                     value = std::stoi(input);
-                    if (value < std::numeric_limits<int>::min() || value > std::numeric_limits<int>::max()) {
-                        std::cout << "Value is outside the range of a 32-bit integer.\n";
-                        continue;
+                    if (value >= min && value <= max) {
+                        break;
+                    } else {
+                        std::cout << "Value must be between " << min << " and " << max << ".\n";
                     }
-                    if (value >= min && value <= max) break;
-                    else std::cout << "Value must be between " << min << " and " << max << ".\n";
                 } else {
-                    std::cout << "Invalid input. Please enter a valid integer.";
-                    std::cout << "\n";
+                    std::cout << "Invalid input. Please enter a valid integer.\n";
                 }
             }
             catch (const std::exception& e) {
                 std::cout << "Conversion error: " << e.what() << "\n";
             }
-            return value;
         }
+        return value;
     }
 }
 
