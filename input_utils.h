@@ -74,5 +74,4 @@ namespace input {
     }
 }
 
-
 #endif // INPUT_UTILS_H
