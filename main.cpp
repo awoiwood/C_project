@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <cctype>
+
 
 std::string to_lower(const std::string& str) {
     std::string result = str;
@@ -12,7 +12,7 @@ std::string to_lower(const std::string& str) {
 }
 
 bool is_valid_color(const std::string& color, const std::vector<std::string>& colors) {
-    return std::find(colors.begin(), colors.end(), color) != colors.end();
+    return std::ranges::find(colors, color) != colors.end();
 }
 
 bool is_integer(const std::string& s) {
