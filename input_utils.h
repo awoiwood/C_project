@@ -3,12 +3,11 @@
 #define INPUT_UTILS_H
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <limits>
-#include <functional>
+
 #include <ranges>
 
 namespace input {
