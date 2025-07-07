@@ -1,7 +1,7 @@
 // input_utils.h
 #ifndef INPUT_UTILS_H
 #define INPUT_UTILS_H
-
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -45,8 +45,35 @@ namespace input {
         });
     }
 
-    // Safely get an integer within a range from user input
-    inline int int_is_between(const std::string& prompt, int min, int max) {
+     // Check if string fits into long long without overflow
+    inline bool fits_in_long_long(const std::string& str) {
+        static const std::string max_ll = "9223372036854775807";
+        static const std::string min_ll = "9223372036854775808";
+        if (str.empty()) return false;
+        bool negative = str[0] == '-';
+        std::string digits = (str[0] == '+' || str[0] == '-') ? str.substr(1) : str;
+        if (digits.length() > 19) return false;
+        if (digits.length() < 19) return true;
+
+        return digits <= (negative ? min_ll : max_ll);
+    }
+
+    // Safely get an integer within a range from user input0
+    inline int int_is_between(const std::string& prompt, const std::string& minstr, const std::string& maxstr) {
+        const long long intmin = std::numeric_limits<int>::min();
+        const long long intmax = std::numeric_limits<int>::max();
+        // Test as a string first and reject if too large
+        if (!fits_in_long_long(minstr)) {
+            throw std::invalid_argument("Min value: "+minstr+" is too large");
+        }
+        if (!fits_in_long_long(maxstr)) {
+            throw std::invalid_argument("Max value: "+maxstr+" is too large");
+        }
+        long long min = std::stoll(minstr);
+        long long max = std::stoll(maxstr);
+        if (min < intmin || max > intmax || min > max) {
+            throw std::invalid_argument("Range is invalid or exceeds 32-bit integer limits.");
+        }
         std::string input;
         int value = 0;
         while (true) {
@@ -55,7 +82,7 @@ namespace input {
             try {
                 if (is_integer(input)) {
                     value = std::stoi(input);
-                    if (value >= min && value <= max) {
+                    if (value >= static_cast<int>(min) && value <= static_cast<int>(max)) {
                         break;
                     } else {
                         std::cout << "Value must be between " << min << " and " << max << ".\n";
@@ -63,13 +90,12 @@ namespace input {
                 } else {
                     std::cout << "Invalid input. Please enter a valid integer.\n";
                 }
-            }
-            catch (const std::exception& e) {
+            } catch (const std::exception& e) {
                 std::cout << "Conversion error: " << e.what() << "\n";
             }
         }
         return value;
     }
-}
+    }
 
 #endif // INPUT_UTILS_H
